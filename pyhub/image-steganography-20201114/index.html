@@ -25,10 +25,6 @@
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.f0267088.min.css">
         
-          
-          
-          <meta name="theme-color" content="#4051b5">
-        
       
     
     
@@ -54,13 +50,18 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="indigo" data-md-color-accent="">
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
       
   
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
       
     </div>
     <div data-md-component="announce">
@@ -250,9 +251,57 @@
     <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
     
     
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        图像隐写术
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+    
     <a href="./" class="md-nav__link md-nav__link--active">
       图像隐写术
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    元数据修改
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    比特操作
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    频域水印
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    深度学习
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
     
   </li>
 
@@ -269,6 +318,55 @@
               </div>
             
             
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    元数据修改
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    比特操作
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    频域水印
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    深度学习
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content">
             <article class="md-content__inner md-typeset">
@@ -277,7 +375,113 @@
                 
                   <h1>图像隐写术</h1>
                 
-                
+                <p>隐写术是一种将保密信息隐藏在公开信息中的技术，利用图像文件的特性，我们可以把一些想要刻意隐藏的信息或者证明身份、版权的信息隐藏在图像文件中。比如早期流行的将一些下载链接、种子文件隐藏在图片文件中进行传播，再比如某互联网公司内部论坛“月饼事件”中通过员工截图精准定位个人信息的技术，都可以归为图像隐写技术（Image Steganography）。本文主要介绍一些常见的图像隐写技术及 Python 实现方法。</p>
+<h3 id="_1">元数据修改<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
+<p>图像是由像素组成的，但图像文件除了保存像素信息之外，还需要存储一些额外的描述信息。以常见的 JPEG 图像为例，文件格式规定了一些特定的字符用以标志特定的元数据起点位，如下图所示：</p>
+<p><img alt="" src="../imgs/img-ste-1.png" /></p>
+<p>其中常用于存储拍摄设备信息的 EXIF 标记即存储在 APPn 标记位。以二进制格式读取一张 JPEG 图像，可以看到文件的起始（SOI）、终止（EOI）符号：</p>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;input.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f_bytes</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span> <span class="n">f_bytes</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span> <span class="n">f_bytes</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="p">)</span>
+
+<span class="c1"># OUTPUT</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">b&#39;\xff\xd8&#39;</span>
+<span class="sd">b&#39;\xff\xd9&#39; </span>
+<span class="sd">&quot;&quot;&quot;</span> 
+</code></pre></div>
+<p>通过二进制格式，可以直接在图像文件后面追加信息：</p>
+<div class="highlight"><pre><span></span><code><span class="n">txt</span> <span class="o">=</span> <span class="s1">&#39;你好 PyHub!&#39;</span>
+
+<span class="c1"># 编码</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;out_append.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;input.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f_bytes</span><span class="p">[</span><span class="n">sos</span><span class="p">:])</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;你好 PyHub!&#39;</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+<span class="c1"># 解码</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;out_append.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">eoi</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\xff\xd9</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="n">eoi</span><span class="o">+</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span> 
+
+ <span class="c1"># OUTPUT</span>
+ <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd"> 你好 PyHub!</span>
+<span class="sd"> &quot;&quot;&quot;</span> 
+</code></pre></div>
+<p>元数据修改的方法可以做到不损失任何图像质量，但同时也最容易被攻击，现在大部分图像上传应用会对图像内容进行清洗，去除不必要的元数据以保护用户隐私。</p>
+<h3 id="_2">比特操作<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>第二种方法则是针对具体的图像数据进行修改，其原理就是利用图像本身丰富的信息量，在进行少量修改（篡改）的情况下，不会影响整体视觉效果。最常见的方法是**最低有效位（Least Significant Bit, LSB）**，这种方法有很多变种，但其核心思想就是利用最低位对像素值影响不大，篡改后中像素视觉效果影响也不大。</p>
+<p>比如我们可以将一张简单的水印图片进行二值化，得到一张只有 <code>0/1</code> 表示的图片：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="n">logo</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;logo.jpg&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">)</span>
+<span class="n">logo_bin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">logo</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="" src="../imgs/img-ste-2.png" /></p>
+<div class="highlight"><pre><span></span><code><span class="n">base</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;input.jpg&quot;</span><span class="p">)</span>
+<span class="c1"># 最低位变为 0</span>
+<span class="n">base_lsb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bitwise_and</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="mh">0xFE</span><span class="p">)</span>
+<span class="c1"># 将 logo 拼接到最低位(其中一个通道，也可以保留3个通道)</span>
+<span class="n">logo_h</span><span class="p">,</span> <span class="n">logo_w</span> <span class="o">=</span> <span class="n">logo_bin</span><span class="o">.</span><span class="n">shape</span>
+<span class="n">base_lsb</span><span class="p">[:</span><span class="n">logo_h</span><span class="p">,</span> <span class="p">:</span><span class="n">logo_w</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">logo_bin</span>
+
+<span class="c1"># 解码</span>
+<span class="n">base_decode</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bitwise_and</span><span class="p">(</span><span class="n">base_lsb</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="" src="../imgs/img-ste-3.png" /></p>
+<p>上面的例子仅仅只是占用了原图单通道最低位 <code>1bit</code> 的信息，也可以原图和隐藏图片各占一半，原理是一样的。</p>
+<blockquote>
+<p>可以参考：<a href="https://github.com/kelvins/steganography">https://github.com/kelvins/steganography</a></p>
+</blockquote>
+<p><img alt="" src="../imgs/img-ste-4.png" /></p>
+<p>对图像数据进行比特操作的方法有很多，比如可以通过修改最低位的奇偶值，直接存储二进制编码（<a href="https://www.geeksforgeeks.org/image-based-steganography-using-python/">https://www.geeksforgeeks.org/image-based-steganography-using-python/</a>）；或者按比特位对图像进行重新分割，等等。</p>
+<p><img alt="" src="../imgs/img-ste-5.png" /></p>
+<p>很显然，通过操作图像数据进行隐写会在一定程度上修改图像的视觉质量，而且对于内容本身不够丰富的图像（例如大面积纯色背景），这种方法就很容易露出马脚。</p>
+<h3 id="_3">频域水印<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>除了对像素（空间域）进行操作外，还可以在频率域进行操作，其原理就是进行傅里叶变换后，对频率域的数据加水印：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 原图，1-1</span>
+<span class="n">base</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;input.jpg&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">)</span>
+
+<span class="n">base_fft</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft2</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">base</span><span class="p">))</span>
+<span class="n">base_ffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">base_fft</span><span class="p">)</span>
+
+<span class="c1"># 绘制水印</span>
+<span class="n">fnt</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">truetype</span><span class="p">(</span><span class="s2">&quot;Cyberway Riders.otf&quot;</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+<span class="n">wm</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">wm</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;PyHub&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">fnt</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">))</span>
+<span class="n">wm_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">wm</span><span class="p">)</span>
+<span class="c1"># 反转生成中心对称，图1-2</span>
+<span class="n">fft_wm_arr</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">wm_arr</span><span class="p">)</span> <span class="o">+</span> <span class="n">wm_arr</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+<span class="c1"># 叠加水印，图1-3</span>
+<span class="n">base_ffs</span><span class="o">.</span><span class="n">real</span><span class="p">[</span><span class="n">fft_wm_arr</span> <span class="o">==</span> <span class="mi">255</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>
+
+<span class="c1"># 傅里叶逆变换，图2-1</span>
+<span class="n">base_reversed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifft2</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifftshift</span><span class="p">(</span><span class="n">base_ffs</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+<span class="c1"># 对逆变换（编码）后的图进行解码，图2-2</span>
+<span class="n">base_decode</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft2</span><span class="p">(</span><span class="n">base_reversed</span><span class="p">))</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+
+<span class="c1"># 编码后的图与原图的差异，图2-2</span>
+<span class="n">base_reversed</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">base</span><span class="p">)</span> 
+</code></pre></div>
+<p><img alt="" src="../imgs/img-ste-6.png" /></p>
+<p>以上的方法比较简单粗暴，直接对频域的特定区域叠加了水印，实际效果可能会对原始图片造成较大损害，更准确的方法应该是对水印图片进行编码，让水印图像均匀地分布在各个频率，具体可以参考：<a href="https://github.com/guofei9987/blind_watermark/">https://github.com/guofei9987/blind_watermark/</a>。对频域进行修改的方法对图像视觉效果影响更小，在面对各种图像改写攻击时的还原效果更好。</p>
+<h3 id="_4">深度学习<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>一切皆可深度学习。</p>
+</blockquote>
+<p>通过 PapersWithCode 网站可以看到一些尝试用深度学习的方法进行图像隐写的研究，例如这篇采用对抗生成网络（GAN）模型，将数据<code>Data</code> 编码到<code>Image</code>中：</p>
+<p><img alt="" src="../imgs/img-ste-7.png" /></p>
+<p>可以通过 <code>pip install steganogan</code> 安装作者预训练的模型：</p>
+<div class="highlight"><pre><span></span><code>steganogan encode input.jpg <span class="s2">&quot;Hi PyHub&quot;</span> -o out_gan.jpg 
+</code></pre></div>
+<p>效果如下：</p>
+<p><img alt="" src="../imgs/img-ste-8.png" /></p>
                 
               
               
